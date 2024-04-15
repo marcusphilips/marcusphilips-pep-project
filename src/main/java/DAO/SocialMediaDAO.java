@@ -38,7 +38,7 @@ public class SocialMediaDAO {
 
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()){
-                return new Account((int) rs.getInt(1), account.getUsername(), account.getPassword());
+                return new Account(rs.getInt(1), account.getUsername(), account.getPassword());
             }
         }
         catch(SQLException e){
@@ -65,7 +65,7 @@ public class SocialMediaDAO {
 
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()){
-                return new Account((int) rs.getInt(1), account.getUsername(), account.getPassword());
+                return new Account(rs.getInt(1), account.getUsername(), account.getPassword());
             }
         }
         catch(SQLException e){
@@ -114,20 +114,120 @@ public class SocialMediaDAO {
         return null;
     }
 
+    /**
+     * Gets all the messages.
+     * @return
+     */
     public ArrayList<Message> getAllMessages(){
         Connection connection = ConnectionUtil.getConnection();
         ArrayList<Message> messages = new ArrayList<Message> ();
         try{
             String sql = "SELECT * from message;";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
-                new Message(
+                Message m = new Message(
                     rs.getInt(1), 
                     rs.getInt(2), 
                     rs.getString(3), 
                     rs.getLong(4)
                 );
+                messages.add(m);
+            }
+        }
+        catch(SQLException e){
+            System.out.println(e.getMessage());
+
+        }
+        return messages;
+    }
+
+    /**
+     * 
+     * @param message_id
+     * @return
+     */
+    public Message getMessageByMessageID (int message_id){
+        Connection connection = ConnectionUtil.getConnection();
+        try{
+            String sql = "SELECT * FROM message WHERE message_id = ?;";
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            ps.setInt(1, message_id);
+
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()){
+                return new Message(
+                    rs.getInt(1), 
+                    rs.getInt(2), 
+                    rs.getString(3), 
+                    rs.getLong(4)
+                );
+            }
+        }
+        catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Deletes message by its ID.
+     * @param message_id
+     */
+    public void deleteMessage(int message_id){
+        Connection connection = ConnectionUtil.getConnection();
+        try{
+            String sql = "DELETE FROM message WHERE message_id = ?;";
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            ps.setInt(1, message_id);
+
+            ps.executeUpdate();
+
+            
+        }
+        catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void updateMessage(int message_id, String messageBody){
+        Connection connection = ConnectionUtil.getConnection();
+        try{
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?;";
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            ps.setString(1, messageBody);
+            ps.setInt(2, message_id);
+
+            ps.executeUpdate();
+        }
+        catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public ArrayList<Message> getAllMessagesByUserID(int user_id){
+        Connection connection = ConnectionUtil.getConnection();
+        ArrayList<Message> messages = new ArrayList<Message> ();
+        try{
+            String sql = "SELECT * from message WHERE posted_by = ?;";
+           
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS); 
+            ps.setInt(1, user_id);
+
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                Message m = new Message(
+                    rs.getInt(1), 
+                    rs.getInt(2), 
+                    rs.getString(3), 
+                    rs.getLong(4)
+                );
+                messages.add(m);
             }
         }
         catch(SQLException e){
