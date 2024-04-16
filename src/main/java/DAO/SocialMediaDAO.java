@@ -47,6 +47,50 @@ public class SocialMediaDAO {
         return null;
     }
 
+    public Account findAccountByUsername(Account account){
+        Connection connection = ConnectionUtil.getConnection();
+        try{
+            String sql = "SELECT * FROM account WHERE username = ?;";
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            ps.setString(1, account.getUsername());
+
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()){
+                return new Account(rs.getInt(1), account.getUsername(), account.getPassword());
+            }
+        }
+        catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public Account findAccountByAccountID(int account_id){
+        Connection connection = ConnectionUtil.getConnection();
+        try{
+            String sql = "SELECT * FROM account WHERE account_id = ?;";
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            ps.setInt(1, account_id);
+
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()){
+                return new Account(rs.getInt(1), 
+                rs.getString(2), 
+                rs.getString(3));
+            }
+        }
+        catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
     /**
      * Logs in. Returns account type with its primary key `account_id` if successful otherwise returns null.
      * @param account just username and password
@@ -116,7 +160,7 @@ public class SocialMediaDAO {
 
     /**
      * Gets all the messages.
-     * @return
+     * @return ArrayList of all messages ever posted
      */
     public ArrayList<Message> getAllMessages(){
         Connection connection = ConnectionUtil.getConnection();
