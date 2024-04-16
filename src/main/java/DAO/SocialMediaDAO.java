@@ -76,9 +76,9 @@ public class SocialMediaDAO {
 
             ps.setInt(1, account_id);
 
-            ps.executeUpdate();
+            
 
-            ResultSet rs = ps.getGeneratedKeys();
+            ResultSet rs = ps.executeQuery();
             if (rs.next()){
                 return new Account(rs.getInt(1), 
                 rs.getString(2), 
@@ -105,9 +105,9 @@ public class SocialMediaDAO {
             ps.setString(1, account.getUsername());
             ps.setString(2, account.getPassword());
 
-            ps.executeUpdate();
+            
 
-            ResultSet rs = ps.getGeneratedKeys();
+            ResultSet rs = ps.executeQuery();
             if (rs.next()){
                 return new Account(rs.getInt(1), account.getUsername(), account.getPassword());
             }
