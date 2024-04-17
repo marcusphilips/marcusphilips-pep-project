@@ -40,19 +40,19 @@ public class SocialMediaService {
     public Message getMessageByMessageID(int message_id){
         return socialMediaDAO.getMessageByMessageID(message_id);
     }
-    public int deleteMessage(int message_id){
-        if (socialMediaDAO.getMessageByMessageID(message_id) != null){
+    public Message deleteMessage(int message_id){
+        Message toDelete = socialMediaDAO.getMessageByMessageID(message_id);
+        if (toDelete != null){
             socialMediaDAO.deleteMessage(message_id);
-            return message_id;
         }
-        return -1;
+        return toDelete;
     }
-    public int updateMessage(int message_id, String body){
+    public Message updateMessage(int message_id, String body){
         if (body.length() != 0 && body.length() <= 255){
             socialMediaDAO.updateMessage(message_id, body);
-            return message_id;
+            return socialMediaDAO.getMessageByMessageID(message_id);
         }
-        return -1;
+        return null;
     }
     public ArrayList<Message> getAllByMessagesByUserID(int user_id){
         return socialMediaDAO.getAllMessagesByUserID(user_id);
