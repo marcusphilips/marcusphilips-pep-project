@@ -13,19 +13,26 @@ import Model.Message;
 import Service.*;
 
 /**
- * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
+ * TODO: You will need to write your own endpoints and handlers for your
+ * controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should
- * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
+ * refer to prior mini-project labs and lecture materials for guidance on how a
+ * controller may be built.
  */
 public class SocialMediaController {
     private SocialMediaService service;
-    public SocialMediaController(){
+
+    public SocialMediaController() {
         this.service = new SocialMediaService();
     }
+
     /**
-     * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
+     * In order for the test cases to work, you will need to write the endpoints in
+     * the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
-     * @return a Javalin app object which defines the behavior of the Javalin controller.
+     * 
+     * @return a Javalin app object which defines the behavior of the Javalin
+     *         controller.
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
@@ -52,11 +59,10 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(ctx.body(), Message.class);
         Message updated = service.updateMessage(id, message.getMessage_text());
-        if (updated != null){
+        if (updated != null) {
             ctx.json(updated);
             ctx.status(200);
-        }
-        else
+        } else
             ctx.status(400);
     }
 
@@ -86,9 +92,9 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(ctx.body(), Message.class);
         Message newMessage = service.post(message);
-        if (newMessage == null){
+        if (newMessage == null) {
             ctx.status(400);
-        }else{
+        } else {
             ctx.status(200);
             ctx.json(mapper.writeValueAsString(newMessage));
         }
@@ -98,9 +104,9 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Account user = mapper.readValue(ctx.body(), Account.class);
         Account loggedAccount = service.login(user);
-        if (loggedAccount == null){
+        if (loggedAccount == null) {
             ctx.status(401);
-        }else{
+        } else {
             ctx.status(200);
             ctx.json(mapper.writeValueAsString(loggedAccount));
         }
@@ -110,9 +116,9 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Account newUser = mapper.readValue(ctx.body(), Account.class);
         Account addedUser = service.createAccount(newUser);
-        if (addedUser == null){
+        if (addedUser == null) {
             ctx.status(400);
-        }else{
+        } else {
             ctx.status(200);
             ctx.json(mapper.writeValueAsString(addedUser));
         }
