@@ -199,9 +199,7 @@ public class SocialMediaDAO {
 
             ps.setInt(1, message_id);
 
-            ps.executeUpdate();
-
-            ResultSet rs = ps.getGeneratedKeys();
+            ResultSet rs = ps.executeQuery();
             if (rs.next()){
                 return new Message(
                     rs.getInt(1), 
